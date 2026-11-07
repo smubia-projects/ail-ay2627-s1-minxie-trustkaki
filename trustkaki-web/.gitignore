@@ -54,3 +54,6 @@ next-env.d.ts
 # Locally installed Neon agent tooling (reinstall with npx neon skills -y)
 .agents/
 skills-lock.json
+
+# API bundle (built in the Docker image)
+server/dist/
