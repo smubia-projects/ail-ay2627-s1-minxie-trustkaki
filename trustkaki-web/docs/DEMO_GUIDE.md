@@ -1,5 +1,7 @@
 # Demo guide: TrustKaki in action
 
+> **AI Lodge showcase:** this guide describes the student's original deployment (sign-in, judge workspace, Telegram). The club's demo at https://ail-ay2627-s1-minxie-trustkaki.vercel.app has no login: the guided care desk plus a **Live agents** view. See the [overview](../../README.md#ai-lodge-showcase-deployment).
+
 [Project overview](../../README.md) · [Try TrustKaki](https://trustkaki.vercel.app) · [Documentation](README.md)
 
 **Everyday conversations → changes across days → informed human follow-up.** These screenshots show how an AAC team can review a senior's situation and inspect the AI behind it.

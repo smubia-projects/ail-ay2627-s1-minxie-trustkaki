@@ -8,7 +8,29 @@ TrustKaki is an AI-assisted check-in and care-coordination system for Active Age
 
 **AI Lodge Hackathon · Solving a Business Problem**
 
-[Open TrustKaki](https://trustkaki.vercel.app) · [Demo guide](trustkaki-web/docs/DEMO_GUIDE.md) · [Technical setup](trustkaki-web/README.md) · [Architecture explained](trustkaki-web/docs/ARCHITECTURE.md) · [Documentation](trustkaki-web/docs/README.md)
+[Open the TrustKaki demo](https://ail-ay2627-s1-minxie-trustkaki.vercel.app) · [Demo guide](trustkaki-web/docs/DEMO_GUIDE.md) · [Technical setup](trustkaki-web/README.md) · [Architecture explained](trustkaki-web/docs/ARCHITECTURE.md) · [Documentation](trustkaki-web/docs/README.md)
+
+## AI Lodge showcase deployment
+
+TrustKaki was built by **Ng Min Xie** for the SMU BIA AI Lodge Hackathon. This fork, [`smubia-projects/ail-ay2627-s1-minxie-trustkaki`](https://github.com/smubia-projects/ail-ay2627-s1-minxie-trustkaki), is a modified copy hosted by the club **with her permission**; all rights to the original remain hers (see [Source use](#source-use)).
+
+**Live demo:** https://ail-ay2627-s1-minxie-trustkaki.vercel.app (no login, fictional seniors only).
+
+| Part | Where | What it does |
+| --- | --- | --- |
+| Frontend | Vercel, root `trustkaki-web/` | The student's guided care desk (browser-only state) and a **Live agents** view |
+| API | Cloud Run, [`trustkaki-web/server/`](trustkaki-web/server/server.ts) (Express, bundled with esbuild) | `GET /api/health`, `POST /api/agents/orchestrate`: one message from a fictional senior through the student's agent team (triage, digital safety, context memory, community activities, policy, briefing). Stateless: the browser sends the last ten turns, nothing is saved |
+| AI | `API_BASE_URL` / `API_KEY` / `MODEL_NAME` (club gateway, default model `deepseek-v4-flash`) | Every agent call |
+| Limit | Shared AI Lodge rate limiter (Upstash), bucket `chat`, one hit per message | A 429 shows the AI Lodge card; a 503 means the demo is paused |
+
+**What the showcase leaves out:** sign-in and the judge account, Supabase (auth, realtime, care records), Telegram and WhatsApp, scheduled check-ins and Vercel crons, and the Neon/Pinecone personal-memory pipeline. In place of the memory search, each fictional senior's confirmed preferences and routines (from the original fictional seed data) are passed to the agents as a fixed snippet ([`src/data/liveDemoSeniors.ts`](trustkaki-web/src/data/liveDemoSeniors.ts)). Jev routing stays in the code but is off. The sections below describe the student's original system, including parts that are not deployed here.
+
+| Model role | Variable | Default |
+| --- | --- | --- |
+| All agents (JSON output) | `MODEL_NAME` | `deepseek-v4-flash` |
+| Jev routing (off) | `JEV_API_BASE_URL`, `JEV_API_KEY` | OpenRouter `typesafe/jev-1.14` |
+
+Environment variables: [`trustkaki-web/.env.example`](trustkaki-web/.env.example). Local run: `npm ci`, then `npm run dev:server` (API on :8080) and `npm run dev` (frontend on :3000).
 
 ## Product demo · 1:28
 
@@ -79,7 +101,7 @@ Generated with [GitDiagram](https://gitdiagram.com/minxie-ng/trustkaki). This co
 
 | View | Best for |
 | --- | --- |
-| [Live application](https://trustkaki.vercel.app) | Experience the care workflow and authenticated judge workspace |
+| [Live demo](https://ail-ay2627-s1-minxie-trustkaki.vercel.app) | The guided care desk and the live agent team (AI Lodge showcase, no login) |
 | [Interactive repository map · GitDiagram](https://gitdiagram.com/minxie-ng/trustkaki) | Explore the code structure alongside the repository |
 | [Architecture guide](trustkaki-web/docs/ARCHITECTURE.md) | Understand data flow, roles, database access and safety boundaries |
 
@@ -237,3 +259,5 @@ This runs tests, type checking, lint and a production build. Paid model evaluati
 ## Source use
 
 No open-source license is granted. The source is public for hackathon review and portfolio transparency; all rights are reserved by Ng Min Xie. Third-party dependencies and diagram tooling retain their respective licenses.
+
+The SMU BIA AI Lodge hosts a modified copy of TrustKaki (this fork) with Ng Min Xie's permission, given in November 2026.
