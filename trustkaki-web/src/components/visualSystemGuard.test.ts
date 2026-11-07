@@ -14,7 +14,8 @@ function productionFiles(directory: string): string[] {
     const entryPath = path.join(directory, entry.name);
     if (entry.isDirectory()) return productionFiles(entryPath);
     const isTestFile = entry.name.includes(".test.") || entry.name.includes(".spec.");
-    if (!/\.(?:tsx|css)$/.test(entry.name) || isTestFile) {
+    // RateLimitCTA.tsx is the AI Lodge's shared limit modal, with its own fixed design.
+    if (!/\.(?:tsx|css)$/.test(entry.name) || isTestFile || entry.name === "RateLimitCTA.tsx") {
       return [];
     }
     return [entryPath];
@@ -60,7 +61,7 @@ function controlRadiusViolations(input: SourceFile[]): string[] {
         const token = match[0];
         const utility = token.slice(token.lastIndexOf(":") + 1);
         const standardRadius = ["rounded-lg", "rounded-xl", "rounded-2xl"].includes(utility);
-        const conversationTail = source.path === "src/components/ChatSimulation.tsx" &&
+        const conversationTail = source.path === "src/components/LiveAgentDemo.tsx" &&
           ["rounded-br-md", "rounded-bl-md"].includes(utility);
         const entryCard = source.path === "src/components/SignInForm.tsx" && utility === "rounded-3xl";
         return standardRadius || conversationTail || entryCard || utility === "rounded-none" ||
@@ -572,7 +573,7 @@ describe("care desk visual system", () => {
 
   test("keeps special radii scoped to conversation tails and the sign-in card", () => {
     expect(controlRadiusViolations([
-      fixture("src/components/ChatSimulation.tsx", '<div className="rounded-2xl rounded-br-md rounded-bl-md" />'),
+      fixture("src/components/LiveAgentDemo.tsx", '<div className="rounded-2xl rounded-br-md rounded-bl-md" />'),
       fixture("src/components/SignInForm.tsx", '<div className="rounded-3xl" />'),
       fixture("src/components/Card.tsx", '<div className="rounded-lg rounded-xl rounded-2xl" />'),
     ])).toEqual([]);

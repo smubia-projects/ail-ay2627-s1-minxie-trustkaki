@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AppShell, { type AppView } from "./AppShell";
 import Dashboard from "./Dashboard";
+import LiveAgentDemo from "./LiveAgentDemo";
 import { CareActivity } from "./dashboard/CareActivity";
 import { DemoGuide, type DemoGuideCommands } from "./dashboard/DemoGuide";
 import { demoGuideComposition, type DemoPhase } from "./dashboard/demoGuideState";
@@ -20,17 +21,22 @@ function persist(document: PublicDemoDocument): void {
   try { window.sessionStorage.setItem(PUBLIC_DEMO_STORAGE_KEY, serializePublicDemo(document)); } catch { /* storage is optional */ }
 }
 
+/**
+ * The whole public demo: the student's guided care desk (fictional senior, browser-only
+ * state, no AI) and the live agent chat (LiveAgentDemo, real model calls through the API).
+ */
 export default function PublicDemoWorkspace({
   initialDocument,
-  onExit,
 }: {
   initialDocument?: PublicDemoDocument;
-  onExit: () => void;
 }) {
   const [document, setDocument] = useState<PublicDemoDocument>(initialDocument ?? createInitialPublicDemo());
   const documentRef = useRef(document);
   const [demoError, setDemoError] = useState<string | null>(null);
   const [timelineRequest, setTimelineRequest] = useState(0);
+  const [liveAgents, setLiveAgents] = useState(false);
+  // "Exit guided demo" leaves the guide and shows the care desk as it is; Reset demo starts over.
+  const [guideOn, setGuideOn] = useState(true);
 
   useEffect(() => { documentRef.current = document; }, [document]);
 
@@ -55,33 +61,34 @@ export default function PublicDemoWorkspace({
 
   const reset = useCallback(() => {
     setDemoError(null);
+    setGuideOn(true);
     update(createInitialPublicDemo());
   }, [update]);
 
   const phase = document.phase;
-  const composition = demoGuideComposition({ activeView: document.activeView, enabled: true, phase });
+  const composition = demoGuideComposition({ activeView: document.activeView, enabled: guideOn, phase });
   const changePhase = useCallback((nextPhase: DemoPhase) => {
     if (nextPhase === "exited") return;
     const current = documentRef.current;
     update({ ...current, phase: nextPhase, activeView: nextPhase === "complete" ? "activity" : current.activeView });
   }, [update]);
-  const changeView = useCallback((view: AppView) => { if (view !== "demo") update({ ...documentRef.current, activeView: view }); }, [update]);
+  const changeView = useCallback((view: AppView) => {
+    setLiveAgents(view === "demo");
+    if (view !== "demo") update({ ...documentRef.current, activeView: view });
+  }, [update]);
   const data: DashboardData = document.data;
 
   return (
     <AppShell
-      activeView={document.activeView}
-      isDemoAdmin={false}
+      activeView={liveAgents ? "demo" : document.activeView}
       riskLevel={data.senior.riskLevel}
-      publicDemo
       onViewChange={changeView}
-      onOpenSetup={() => undefined}
-      onSignOut={onExit}
     >
+      {liveAgents ? <LiveAgentDemo /> : <>
       <div className="flex h-full overflow-hidden">
         <div className="relative min-w-0 flex-1">
           <DemoGuide
-            enabled
+            enabled={guideOn}
             variant="public"
             phase={phase}
             error={demoError}
@@ -93,8 +100,8 @@ export default function PublicDemoWorkspace({
             onDataChange={(nextData) => update({ ...documentRef.current, data: nextData })}
             onRefresh={async () => data}
             onOpenTimeline={() => { update({ ...documentRef.current, activeView: "workspace" }); setTimelineRequest((value) => value + 1); }}
-            onUnauthorized={onExit}
-            onExit={onExit}
+            onUnauthorized={reset}
+            onExit={() => setGuideOn(false)}
           >
             <div className={composition.showWorkspace ? "h-full" : "hidden"}>
               <Dashboard
@@ -106,19 +113,11 @@ export default function PublicDemoWorkspace({
                 isDemoAdmin={false}
                 guideLocked={composition.lockWorkspaceMutations || true}
                 openTimelineRequest={timelineRequest}
-                onUnauthorized={onExit}
+                onUnauthorized={reset}
                 onSelectSenior={() => undefined}
-                contactPlan={null}
-                contactPlanLoading={false}
-                contactPlanError={null}
-                checkInSchedule={null}
-                checkInScheduleLoading={false}
-                checkInScheduleError={null}
                 seniorContext={null}
                 seniorContextLoading={false}
                 seniorContextError={null}
-                careSetupOpen={false}
-                onCloseCareSetup={() => undefined}
                 onViewActivity={() => changeView("activity")}
               />
             </div>
@@ -135,6 +134,7 @@ export default function PublicDemoWorkspace({
       </div>
       <div className="sr-only">Demo data. Reset demo restores the original fictional case.</div>
       <button type="button" onClick={reset} className="fixed bottom-4 right-4 z-20 min-h-10 border border-[var(--care-evergreen)] bg-white px-3 py-2 text-xs font-semibold text-[var(--care-evergreen)]">Reset demo</button>
+      </>}
     </AppShell>
   );
 }

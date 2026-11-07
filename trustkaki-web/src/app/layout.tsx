@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
+import { ApiNotices } from "@/components/RateLimitCTA";
 
 const bodyFont = DM_Sans({
   variable: "--font-body",
@@ -27,6 +28,7 @@ export default function RootLayout({
     <html lang="en" className={`${bodyFont.variable} ${headingFont.variable} h-full antialiased`}>
       <body className="flex h-full flex-col">
         {children}
+        <ApiNotices />
       </body>
     </html>
   );

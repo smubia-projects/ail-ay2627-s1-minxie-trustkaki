@@ -43,9 +43,9 @@ export default function AgentTracePanel({ traces, run, visible, onToggle }: Agen
       {visible && (
         <div className="decision-trail-scroll min-h-0 flex-1 overflow-y-auto border-t border-[var(--care-line)]">
           <section className="decision-trail-outcome space-y-4" aria-label="Run outcome">
-            <p className="text-gray-600">{run ? "Last completed message in this workspace." : "Latest recorded traces for the selected senior. Send a message to inspect its retrieved context and save outcome."}</p>
+            <p className="text-gray-600">{run ? "Last completed message in this workspace." : "Send a fictional message to see which agents ran, what context they used and what each decided."}</p>
             {run && <>
-              <div className="decision-trail-memory"><h3 className="font-semibold">Personal memory retrieved for this request</h3>
+              <div className="decision-trail-memory"><h3 className="font-semibold">Confirmed preferences supplied to the agents</h3>
                 {!run.retrieval || run.retrieval.status === "not_recorded" ? <p className="mt-1 text-gray-600">Retrieval evidence was not recorded.</p>
                   : run.retrieval.status === "unavailable" ? <p className="mt-1 text-gray-600">Retrieval unavailable. No personal memory supplied.</p>
                   : run.retrieval.items.length === 0 ? <p className="mt-1 text-gray-600">No matching personal memory supplied.</p>
@@ -55,7 +55,7 @@ export default function AgentTracePanel({ traces, run, visible, onToggle }: Agen
               </div>
               <div className="decision-trail-summary">
                 <div><h3 className="font-semibold">Final policy</h3><p className="decision-trail-risk mt-2 capitalize" data-risk={run.riskLevel}>{run.riskLevel} risk</p><p className="mt-1 text-gray-600">Policy retains safety authority.</p></div>
-                <div><h3 className="font-semibold">Save outcome</h3><p className="mt-1">{run.persistence?.persisted === true ? "Saved" : run.persistence?.persisted === false ? "Not saved" : "Not recorded"}{run.persistence?.replayed ? " · Existing request replayed" : ""}</p>
+                <div><h3 className="font-semibold">Save outcome</h3><p className="mt-1">{run.persistence?.persisted === true ? "Saved" : "Not saved: this public demo keeps nothing"}{run.persistence?.replayed ? " · Existing request replayed" : ""}</p>
                   {run.persistence?.patternWatch?.status === "failed" && <p role="alert" className="mt-2 text-[var(--care-coral)]">Pattern and care queue update failed. The chat and recorded decisions were saved. Review Activity; do not resend this message.</p>}
                   {run.persistence?.memory && <p className="mt-1 text-gray-600">Personal memory: {run.persistence.memory.accepted} accepted, {run.persistence.memory.rejected} rejected, {run.persistence.memory.failed} failed</p>}
                   {!!run.persistence?.memory?.failures?.length && <ul className="mt-2 space-y-1 text-gray-600">{[...new Set(run.persistence.memory.failures.map(memoryFailureLabel))].map(label => <li key={label}>{label}</li>)}</ul>}

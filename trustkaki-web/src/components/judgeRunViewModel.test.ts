@@ -13,7 +13,7 @@ describe("judge decision trail", () => {
   });
   it("does not claim RAG evidence or a saved result from historical traces", () => {
     const html = renderToStaticMarkup(createElement(AgentTracePanel, { traces: [trace], visible: true, onToggle: () => {} }));
-    expect(html).toContain("Latest recorded traces");
+    expect(html).toContain("Send a fictional message to see which agents ran");
     expect(html).not.toContain("Save outcome");
     expect(html).toContain("actual-provider-model");
     expect(html).toContain("0 ms");
