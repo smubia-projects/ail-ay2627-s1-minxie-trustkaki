@@ -3,8 +3,13 @@ import { z } from "zod";
 
 export const socialIntentLabels = ["interested", "declining", "unclear"] as const;
 export type SocialIntent = typeof socialIntentLabels[number];
-export const JEV_EVALUATION_ENDPOINT = "https://api.typesafe.ai/v1/systemone";
-export const OPENROUTER_JEV_ENDPOINT = "https://openrouter.ai/api/v1/systemone";
+/**
+ * Jev's System One endpoint. It exists only on OpenRouter, so it has its own base URL
+ * (JEV_API_BASE_URL) rather than API_BASE_URL. Off unless TRUSTKAKI_JEV_*_ENABLED is set.
+ */
+export const jevEndpoint = () =>
+  `${(process.env.JEV_API_BASE_URL?.trim() || "https://openrouter.ai/api/v1").replace(/\/+$/, "")}/systemone`;
+export const jevApiKey = () => process.env.JEV_API_KEY?.trim() || process.env.OPENROUTER_API_KEY?.trim();
 export function buildJevSocialIntentRequest(message: string, question?: ActivityQuestion) {
   const currentMessage = z.string().trim().min(1).max(1000).parse(message);
   return {

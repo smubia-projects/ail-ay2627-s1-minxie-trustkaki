@@ -1,5 +1,5 @@
 import type { SocialIntent } from "../socialIntentContract";
-export { socialIntentLabels, buildJevSocialIntentRequest, parseJevSocialIntent, JEV_EVALUATION_ENDPOINT, OPENROUTER_JEV_ENDPOINT } from "../socialIntentContract";
+export { socialIntentLabels, buildJevSocialIntentRequest, parseJevSocialIntent } from "../socialIntentContract";
 export type { SocialIntent } from "../socialIntentContract";
 
 export interface SocialIntentCase {

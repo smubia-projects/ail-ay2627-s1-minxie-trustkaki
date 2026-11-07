@@ -27,10 +27,12 @@ export class LLMProvider {
   private timeoutMs: number;
 
   constructor() {
-    this.apiKey = process.env.TRUSTKAKI_LLM_API_KEY;
-    this.baseUrl =
-      process.env.TRUSTKAKI_LLM_BASE_URL || "https://api.openai.com/v1";
-    this.defaultModel = process.env.TRUSTKAKI_LLM_MODEL || "gpt-4o-mini";
+    // AI Lodge names first (API_BASE_URL / API_KEY / MODEL_NAME), then the original TRUSTKAKI_LLM_* names.
+    this.apiKey = process.env.API_KEY?.trim() || process.env.TRUSTKAKI_LLM_API_KEY?.trim() || undefined;
+    this.baseUrl = (
+      process.env.API_BASE_URL?.trim() || process.env.TRUSTKAKI_LLM_BASE_URL?.trim() || "https://openrouter.ai/api/v1"
+    ).replace(/\/+$/, "");
+    this.defaultModel = process.env.MODEL_NAME?.trim() || process.env.TRUSTKAKI_LLM_MODEL?.trim() || "deepseek-v4-flash";
     this.timeoutMs = boundedTimeoutMs(process.env.TRUSTKAKI_LLM_TIMEOUT_MS);
   }
 
@@ -45,7 +47,7 @@ export class LLMProvider {
   async chat(params: LLMCallParams): Promise<LLMCallResult> {
     if (!this.apiKey) {
       throw new Error(
-        "LLM API key not configured. Set TRUSTKAKI_LLM_API_KEY environment variable."
+        "LLM API key not configured. Set the API_KEY environment variable."
       );
     }
 
@@ -71,6 +73,8 @@ export class LLMProvider {
           temperature: params.temperature ?? 0.7,
           max_tokens: params.maxTokens ?? 1024,
           response_format: { type: "json_object" },
+          // DeepSeek thinks before answering by default; the agents share a 45 s budget.
+          ...(model.includes("deepseek") ? { reasoning_effort: "none" } : {}),
         }),
       });
     } catch (error) {

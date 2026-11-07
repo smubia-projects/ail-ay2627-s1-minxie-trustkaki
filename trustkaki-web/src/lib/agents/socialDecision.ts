@@ -3,7 +3,7 @@ import { inferenceSignal } from "./inferenceBudget";
 import { randomUUID } from "node:crypto";
 import type { Message } from "@/lib/types";
 import type { AACNudgeOutput, AgentRunResult } from "./contracts";
-import { buildJevSocialIntentRequest, OPENROUTER_JEV_ENDPOINT, parseJevSocialIntent, type SocialIntent } from "./socialIntentContract";
+import { buildJevSocialIntentRequest, jevApiKey, jevEndpoint, parseJevSocialIntent, type SocialIntent } from "./socialIntentContract";
 
 export const JEV_SOCIAL_MODEL = "typesafe/jev-1.14";
 export function jevIsEnabled(): boolean {
@@ -54,10 +54,10 @@ export async function runJevSocialDecision(message: string, options: { carePrior
     if (options.boundedReply) throw new Error("jev_capability_priority");
     if (options.carePriority) throw new Error("jev_care_priority");
     if (!jevIsEnabled()) throw new Error("jev_disabled");
-    const apiKey = process.env.OPENROUTER_API_KEY?.trim();
+    const apiKey = jevApiKey();
     if (!apiKey) throw new Error("jev_not_configured");
     const payload = { ...buildJevSocialIntentRequest(message, options.activityQuestion), model: JEV_SOCIAL_MODEL };
-    const response = await fetch(OPENROUTER_JEV_ENDPOINT, {
+    const response = await fetch(jevEndpoint(), {
       method: "POST", redirect: "error", signal: inferenceSignal(3000, true),
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify(payload),

@@ -4,7 +4,7 @@ import type { AgentTrace } from "@/lib/types";
 import type { AgentRunContext } from "./contracts";
 import { buildRoutingShadowRequest, parseRoutingShadowResponse, routingFlags, triageRoutingJudgment,
   type RoutingJudgment } from "./routingContract";
-import { OPENROUTER_JEV_ENDPOINT } from "./socialIntentContract";
+import { jevApiKey, jevEndpoint } from "./socialIntentContract";
 import type { RoutingSpecialist } from "./specialistRouting";
 
 interface RoutingShadowRun {
@@ -34,12 +34,12 @@ export async function runJevRoutingShadow(message: string, context: AgentRunCont
     messageCharacters: message.length, usage: null, errorMessage: null };
   let errorCode = "jev_routing_not_configured";
   try {
-    const key = process.env.OPENROUTER_API_KEY?.trim();
+    const key = jevApiKey();
     if (!key) throw new Error();
     errorCode = "jev_routing_input_bounds";
     const body = buildRoutingShadowRequest(message, context);
     errorCode = "jev_routing_unavailable";
-    const response = await fetch(OPENROUTER_JEV_ENDPOINT, {
+    const response = await fetch(jevEndpoint(), {
       method: "POST", redirect: "error", signal: inferenceSignal(3000, true),
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
       body: JSON.stringify(body),

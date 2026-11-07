@@ -122,7 +122,7 @@ export async function runAgent<T>(
       timestamp,
       input: userPrompt,
       reasoning:
-        "LLM API key not configured (TRUSTKAKI_LLM_API_KEY). Using safe fallback response.",
+        "LLM API key not configured (API_KEY). Using safe fallback response.",
       output: JSON.stringify(fallbackData, null, 2),
       tags: ["fallback", "no_llm"],
       data: fallbackData,
