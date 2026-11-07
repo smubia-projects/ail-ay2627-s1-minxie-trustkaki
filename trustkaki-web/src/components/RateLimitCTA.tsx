@@ -16,7 +16,7 @@ export const PROJECT_CTA = {
   accentColor: '#216548',
   headline: 'The care team is on a tea break!',
   description:
-    "TrustKaki's agent team read {count} fictional check-ins in this demo, sorting care, safety and social signals into one reply and a case for a human. Want to build AI that helps people look out for each other? Join us and build projects like this.",
+    'Want to build AI that helps people look out for each other? AI Lodge is a student community shipping real AI products for real people, together.',
   programme: 'AI Lodge',
   programmeLink: 'https://www.smubia.com/ailodge',
   githubLink: 'https://github.com/smubia-projects/ail-ay2627-s1-minxie-trustkaki',
