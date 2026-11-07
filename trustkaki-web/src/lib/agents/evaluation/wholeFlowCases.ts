@@ -1,6 +1,6 @@
-import type { AgentRunContext, OrchestrationResult } from "../src/lib/agents/contracts";
-import { fictionalRoutingContext } from "../src/lib/agents/evaluation/routingShadow";
-import { routingShadowCases } from "../src/lib/agents/evaluation/routingShadowCases";
+import type { AgentRunContext, OrchestrationResult } from "../contracts";
+import { fictionalRoutingContext } from "./routingShadow";
+import { routingShadowCases } from "./routingShadowCases";
 
 export const wholeFlowCases = [
   { id: "urgent_scam", message: "Right now my chest hurts and I cannot breathe properly. A caller wants my bank OTP too." },

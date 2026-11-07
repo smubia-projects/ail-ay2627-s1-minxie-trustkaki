@@ -2,9 +2,8 @@
 
 import { useEffect, useState, type KeyboardEvent } from "react";
 import type { BriefingOutput } from "@/lib/agents/contracts";
-import type { ProactiveCheckInScheduleOverview } from "@/lib/checkins/contracts";
 import type { SeniorContextReadModel } from "@/lib/api/schemas";
-import type { AgentTrace, DashboardData, MaskedContactPlan } from "@/lib/types";
+import type { AgentTrace, DashboardData } from "@/lib/types";
 import {
   dashboardRefreshForVoidConsumer,
   followUpQueueForSenior,
@@ -15,7 +14,6 @@ import { SelectedSeniorSummary } from "./dashboard/SelectedSeniorSummary";
 import { SeniorCoverage } from "./dashboard/SeniorCoverage";
 import { SeniorContextPanel } from "./dashboard/SeniorContextPanel";
 import { ContextPreview } from "./dashboard/ContextPreview";
-import { CareSetupDrawer } from "./dashboard/CareSetupDrawer";
 import {
   mobileTabsActiveForDesktopMatch,
   mobileCareWorkspaceViews,
@@ -34,20 +32,10 @@ interface DashboardProps {
   openTimelineRequest?: number;
   onUnauthorized?: () => void;
   onSelectSenior?: (seniorId: string) => void;
-  contactPlan?: MaskedContactPlan | null;
-  contactPlanLoading?: boolean;
-  contactPlanError?: string | null;
-  onRefreshContactPlan?: () => void;
-  checkInSchedule?: ProactiveCheckInScheduleOverview | null;
-  checkInScheduleLoading?: boolean;
-  checkInScheduleError?: string | null;
-  onRefreshCheckInSchedule?: () => void;
   seniorContext?: SeniorContextReadModel | null;
   seniorContextLoading?: boolean;
   seniorContextError?: string | null;
   onSeniorContextChanged?: (context: SeniorContextReadModel) => void;
-  careSetupOpen?: boolean;
-  onCloseCareSetup?: () => void;
   onViewActivity?: () => void;
 }
 
@@ -61,20 +49,10 @@ export default function Dashboard({
   openTimelineRequest = 0,
   onUnauthorized,
   onSelectSenior,
-  contactPlan = null,
-  contactPlanLoading = false,
-  contactPlanError = null,
-  onRefreshContactPlan,
-  checkInSchedule = null,
-  checkInScheduleLoading = false,
-  checkInScheduleError = null,
-  onRefreshCheckInSchedule,
   seniorContext = null,
   seniorContextLoading = false,
   seniorContextError = null,
   onSeniorContextChanged,
-  careSetupOpen = false,
-  onCloseCareSetup,
   onViewActivity,
 }: DashboardProps) {
   const [mobileView, setMobileView] =
@@ -191,26 +169,6 @@ export default function Dashboard({
         </aside>
         </div>
       </main>
-      <CareSetupDrawer
-        open={careSetupOpen && !guideLocked}
-        onClose={() => onCloseCareSetup?.()}
-        selectedSeniorId={selectedSeniorId}
-        authToken={authToken ?? ""}
-        isAdmin={isDemoAdmin}
-        seniorContext={seniorContext}
-        seniorContextLoading={seniorContextLoading}
-        seniorContextError={seniorContextError}
-        onSeniorContextChanged={(context) => onSeniorContextChanged?.(context)}
-        contactPlan={contactPlan}
-        contactPlanLoading={contactPlanLoading}
-        contactPlanError={contactPlanError}
-        onRefreshContactPlan={() => onRefreshContactPlan?.()}
-        checkInSchedule={checkInSchedule}
-        checkInScheduleLoading={checkInScheduleLoading}
-        checkInScheduleError={checkInScheduleError}
-        onRefreshCheckInSchedule={() => onRefreshCheckInSchedule?.()}
-        onUnauthorized={unauthorized}
-      />
     </>
   );
 }

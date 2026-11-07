@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     ".worktrees/**",
+    // The esbuild bundle of the API.
+    "server/dist/**",
   ]),
 ]);
 

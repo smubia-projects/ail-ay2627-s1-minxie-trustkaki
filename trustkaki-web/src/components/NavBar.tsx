@@ -7,27 +7,9 @@ interface NavProps {
   activeView: AppView;
   riskLevel: "green" | "yellow" | "red";
   onViewChange: (view: AppView) => void;
-  onOpenSetup: () => void;
-  onSignOut: () => void;
-  canShowDemoMode?: boolean;
-  demoMode?: boolean;
-  onDemoModeChange?: (enabled: boolean) => void;
-  suppressWorkflowNavigation?: boolean;
-  publicDemo?: boolean;
 }
 
-export default function NavBar({
-  activeView,
-  riskLevel,
-  onViewChange,
-  onOpenSetup,
-  onSignOut,
-  canShowDemoMode = false,
-  demoMode = false,
-  onDemoModeChange,
-  suppressWorkflowNavigation = false,
-  publicDemo = false,
-}: NavProps) {
+export default function NavBar({ activeView, riskLevel, onViewChange }: NavProps) {
   const riskStatus: Record<typeof riskLevel, { label: string; tone: StatusTone }> = {
     green: { label: "Stable", tone: "stable" },
     yellow: { label: "Needs attention", tone: "attention" },
@@ -46,50 +28,35 @@ export default function NavBar({
         <span className="font-display text-[23px] font-bold text-[var(--care-brand)]">TrustKaki</span>
       </div>
 
-      {!suppressWorkflowNavigation && (
-        <nav
-          aria-label="Primary"
-          className="order-3 flex w-full items-stretch overflow-x-auto gap-1 border-t border-[var(--care-line)] py-2 md:order-none md:min-h-[76px] md:w-auto md:overflow-visible md:border-t-0"
-        >
+      <nav
+        aria-label="Primary"
+        className="order-3 flex w-full items-stretch overflow-x-auto gap-1 border-t border-[var(--care-line)] py-2 md:order-none md:min-h-[76px] md:w-auto md:overflow-visible md:border-t-0"
+      >
         <button
           type="button"
-          aria-current={activeView === "workspace" ? "page" : undefined}
+          aria-current={activeView !== "demo" ? "page" : undefined}
           onClick={() => onViewChange("workspace")}
-          className={activeView === "workspace" ? activeNavigationClass : navigationClass}
+          className={activeView !== "demo" ? activeNavigationClass : navigationClass}
         >
-          Care workspace
+          Guided care desk
         </button>
-        <button type="button" onClick={onOpenSetup} className={navigationClass}>
-          Care setup
+        <button
+          type="button"
+          aria-current={activeView === "demo" ? "page" : undefined}
+          onClick={() => onViewChange("demo")}
+          className={activeView === "demo" ? activeNavigationClass : navigationClass}
+        >
+          Live agents
         </button>
-        {canShowDemoMode && <button type="button" onClick={() => onViewChange("demo")} aria-current={activeView === "demo" ? "page" : undefined} className={activeView === "demo" ? activeNavigationClass : navigationClass}>Judge workspace</button>}
-        {canShowDemoMode && (
-          <button
-            onClick={() => onDemoModeChange?.(!demoMode)}
-            type="button"
-            aria-pressed={demoMode}
-            className={demoMode ? activeNavigationClass : navigationClass}
-          >
-            {demoMode ? "Exit live demo" : "Live system demo"}
-          </button>
-        )}
-        </nav>
-      )}
+      </nav>
 
       <div className="ml-auto flex min-h-16 items-center gap-3">
-        {publicDemo && <span className="border border-[var(--care-line)] px-2 py-1 text-xs font-semibold text-[var(--care-brand)]">Demo data</span>}
+        <span className="border border-[var(--care-line)] px-2 py-1 text-xs font-semibold text-[var(--care-brand)]">Fictional demo data</span>
         <StatusIndicator
           tone={status.tone}
           label={status.label}
           className="text-[var(--care-muted)]"
         />
-        <button
-          onClick={onSignOut}
-          type="button"
-          className="care-secondary-button text-sm"
-        >
-          {publicDemo ? "Exit demo" : "Sign out"}
-        </button>
       </div>
     </header>
   );

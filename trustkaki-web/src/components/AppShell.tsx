@@ -2,38 +2,19 @@
 
 import type { ReactNode } from "react";
 import type { RiskLevel } from "@/lib/types";
-import type { DemoPhase } from "./dashboard/demoGuideState";
 import NavBar from "./NavBar";
 
+/** workspace = the guided care desk, activity = its case history, demo = the live agent chat. */
 export type AppView = "workspace" | "activity" | "demo";
 
 interface AppShellProps {
   activeView: AppView;
-  isDemoAdmin: boolean;
   riskLevel: RiskLevel;
-  demoMode?: boolean;
-  publicDemo?: boolean;
-  guidedDemoPhase?: DemoPhase;
   onViewChange: (view: AppView) => void;
-  onOpenSetup: () => void;
-  onDemoModeChange?: (enabled: boolean) => void;
-  onSignOut: () => void;
   children?: ReactNode;
 }
 
-export default function AppShell({
-  activeView,
-  isDemoAdmin,
-  riskLevel,
-  demoMode = false,
-  publicDemo = false,
-  guidedDemoPhase,
-  onViewChange,
-  onOpenSetup,
-  onDemoModeChange,
-  onSignOut,
-  children,
-}: AppShellProps) {
+export default function AppShell({ activeView, riskLevel, onViewChange, children }: AppShellProps) {
   return (
     <div className="flex h-screen flex-col bg-[var(--care-mist)] text-[var(--care-ink)]">
       <a
@@ -42,20 +23,7 @@ export default function AppShell({
       >
         Skip to main content
       </a>
-      <NavBar
-        activeView={activeView}
-        riskLevel={riskLevel}
-        onViewChange={onViewChange}
-        onOpenSetup={onOpenSetup}
-        onSignOut={onSignOut}
-        canShowDemoMode={isDemoAdmin}
-        demoMode={demoMode}
-        suppressWorkflowNavigation={Boolean(
-          publicDemo || (demoMode && guidedDemoPhase && guidedDemoPhase !== "exited")
-        )}
-        onDemoModeChange={onDemoModeChange}
-        publicDemo={publicDemo}
-      />
+      <NavBar activeView={activeView} riskLevel={riskLevel} onViewChange={onViewChange} />
       <div id="main-content" tabIndex={-1} className="min-h-0 flex-1">
         {children}
       </div>

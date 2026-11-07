@@ -1154,7 +1154,7 @@ describe("capability-safe selected replies", () => {
     ["你记得我喜欢吃什么早餐吗？", "你喜欢吐司，需要我帮你准备吗？", "你喜欢吐司"],
   ])("removes physical meal offers while preserving the rest of the reply: %s", async (message, draft, retained) => {
     const { orchestrate } = await import("./orchestrator");
-    const { wholeFlowCases } = await import("../../../scripts/whole-flow-shadow-cases");
+    const { wholeFlowCases } = await import("./evaluation/wholeFlowCases");
     const ctx = structuredClone(wholeFlowCases.find(c => c.id === "grounded_recall")!.context);
     runAgentMock.mockImplementation(async options => result(options.agentId,
       options.agentId === "triage" ? triageData({ responseMessage: draft }) : options.fallback()));
@@ -1249,7 +1249,7 @@ describe("capability-safe selected replies", () => {
   it.each(["What breakfast do I prefer?", "Tell me what breakfast I prefer."])("preserves a grounded recall answer: %s", async message => {
     const { orchestrate } = await import("./orchestrator");
     runAgentMock.mockResolvedValueOnce(result("triage", triageData({ responseMessage: "You prefer toast for breakfast." })));
-    const { wholeFlowCases } = await import("../../../scripts/whole-flow-shadow-cases");
+    const { wholeFlowCases } = await import("./evaluation/wholeFlowCases");
     const ctx = structuredClone(wholeFlowCases.find(c => c.id === "grounded_recall")!.context);
     const response = await orchestrate(message, ctx);
     expect(response.messages).toEqual([{ text: "You prefer toast for breakfast.", agentId: "triage" }]);

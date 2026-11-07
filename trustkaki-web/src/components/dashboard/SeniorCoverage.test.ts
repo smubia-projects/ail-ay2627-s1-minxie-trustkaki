@@ -44,7 +44,6 @@ function item(seniorId: string, riskLevel: FollowUpQueueItem["riskLevel"], statu
 function renderDashboard(props: {
   guideLocked?: boolean;
   authToken?: string | null;
-  careSetupOpen?: boolean;
 } = {}): string {
   const selected = senior("senior-yellow", "Mr Tan Ah Hock", "yellow");
   const data = {
@@ -73,7 +72,6 @@ function renderDashboard(props: {
     data,
     authToken: props.authToken ?? null,
     guideLocked: props.guideLocked,
-    careSetupOpen: props.careSetupOpen,
   }));
 }
 
@@ -119,7 +117,6 @@ describe("SeniorCoverage", () => {
     const html = renderDashboard({
       guideLocked: true,
       authToken: "test-token",
-      careSetupOpen: true,
     });
 
     expect(html).toContain('aria-label="Senior priority coverage"');
