@@ -31,8 +31,14 @@ export default function LiveAgentDemo() {
   const [run, setRun] = useState<JudgeRun | null>(null);
   const [detailsVisible, setDetailsVisible] = useState(true);
   const requestRef = useRef<AbortController | null>(null);
+  const logRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => () => requestRef.current?.abort(), []);
+  // Keep the newest message in view: the reply arrives below the visitor's message.
+  useEffect(() => {
+    const log = logRef.current;
+    if (log) log.scrollTop = log.scrollHeight;
+  }, [conversation, busy, error]);
 
   function chooseSenior(id: string) {
     requestRef.current?.abort();
@@ -97,7 +103,7 @@ export default function LiveAgentDemo() {
             <h2 className="text-base font-semibold">Chat as {senior.name}</h2>
             <p className="mt-1 text-sm text-gray-600">{senior.age} · {senior.livingSituation}. Caregiver: {senior.caregiver}.</p>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto bg-[var(--care-surface-muted)] px-4 py-5 sm:px-5" role="log" aria-label="Demo messages" aria-live="polite" aria-busy={busy}>
+          <div ref={logRef} className="min-h-0 flex-1 overflow-y-auto bg-[var(--care-surface-muted)] px-4 py-5 sm:px-5" role="log" aria-label="Demo messages" aria-live="polite" aria-busy={busy}>
             {conversation.length === 0 && <p className="py-6 text-base leading-7 text-gray-600">Write a check-in reply as this senior: a health worry, a suspicious message, or an invitation they want to turn down. Then compare the agents that ran with the final reply.</p>}
             {conversation.map((turn) => <article key={turn.id} className={`mb-5 flex ${turn.sender === "senior" ? "justify-end" : "justify-start"}`}>
               <div className={`min-w-0 max-w-[90%] rounded-2xl border border-[var(--care-line)] px-4 py-3 sm:max-w-[85%] ${turn.sender === "senior" ? "rounded-br-md bg-[var(--care-sage)]" : "rounded-bl-md bg-white"}`}>

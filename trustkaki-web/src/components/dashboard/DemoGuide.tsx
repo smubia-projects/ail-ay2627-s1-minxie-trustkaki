@@ -114,7 +114,7 @@ export function DemoGuide({
       <main className="h-full overflow-y-auto bg-[var(--care-mist)] px-4 py-10 sm:px-8">
         <section className="mx-auto max-w-3xl border-y border-[var(--care-line)] bg-white px-5 py-8 sm:px-8">
           <div className="text-xs font-bold uppercase text-[var(--care-coral-hover)]">
-            {variant === "live" ? "Live system demo" : "Guided judge demo"}
+            {variant === "live" ? "Live system demo" : "Guided demo"}
           </div>
           <h1 className="font-display mt-2 text-3xl font-semibold text-[var(--care-ink)]">
             Quiet changes become clear human action
