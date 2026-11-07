@@ -7,7 +7,7 @@ function response(choice = "declining", model = "typesafe/jev-1.14-20261014") {
     probabilities: { interested: +(choice === "interested"), declining: +(choice === "declining"), unclear: +(choice === "unclear") },
   } } };
 }
-beforeEach(() => { vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "true"); vi.stubEnv("OPENROUTER_API_KEY", "test-key"); });
+beforeEach(() => { vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "true"); vi.stubEnv("JEV_API_KEY", "test-key"); });
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 describe("Jev social decision", () => {
@@ -30,7 +30,7 @@ describe("Jev social decision", () => {
 
   it.each(["disabled", "missing_key", "long_input", "empty_input"])("does not send %s requests", async reason => {
     if (reason === "disabled") vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "false");
-    if (reason === "missing_key") vi.stubEnv("OPENROUTER_API_KEY", "");
+    if (reason === "missing_key") vi.stubEnv("JEV_API_KEY", "");
     const request = vi.fn(); vi.stubGlobal("fetch", request);
     const result = await runJevSocialDecision(reason === "long_input" ? "x".repeat(1001) : reason === "empty_input" ? " " : "Any activity?");
     expect(request).not.toHaveBeenCalled();

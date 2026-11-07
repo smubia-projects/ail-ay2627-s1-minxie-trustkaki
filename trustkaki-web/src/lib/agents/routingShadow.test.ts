@@ -8,7 +8,7 @@ const response = () => ({ model: "typesafe/jev-1.14-20261014", usage: { input_to
     probabilities: { present: 1, absent: 0, unclear: 0 } }])) });
 const baseline = (fallback = false) => ({ fallback, data: { signals: [], routing: [], riskLevel: "green", riskChange: "none",
   summary: "private baseline prose", responseMessage: "private reply", humanFollowUpRequired: false } });
-beforeEach(() => { vi.stubEnv("TRUSTKAKI_JEV_ROUTING_SHADOW_ENABLED", "true"); vi.stubEnv("OPENROUTER_API_KEY", "fictional-key"); });
+beforeEach(() => { vi.stubEnv("TRUSTKAKI_JEV_ROUTING_SHADOW_ENABLED", "true"); vi.stubEnv("JEV_API_KEY", "fictional-key"); });
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.restoreAllMocks(); vi.useRealTimers(); });
 
 describe("Jev routing shadow observer", () => {
@@ -37,7 +37,7 @@ describe("Jev routing shadow observer", () => {
 
   it.each(["missing_key", "long_message", "long_context"])("skips %s before sending", async reason => {
     const context = fictionalRoutingContext();
-    if (reason === "missing_key") vi.stubEnv("OPENROUTER_API_KEY", "");
+    if (reason === "missing_key") vi.stubEnv("JEV_API_KEY", "");
     if (reason === "long_context") context.senior.name = "x".repeat(12001);
     const request = vi.fn(); vi.stubGlobal("fetch", request);
     const observation = await runJevRoutingShadow(reason === "long_message" ? "x".repeat(1001) : "hello", context);

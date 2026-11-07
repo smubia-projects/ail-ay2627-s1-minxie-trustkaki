@@ -65,7 +65,7 @@ describe("Jev routing shadow noninterference", () => {
     }, false, false],
   ] as const)("preserves the whole flow for %s", async (_name, message, overrides, triageFallback, failedJev) => {
     const { orchestrate } = await import("./orchestrator");
-    vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "false"); vi.stubEnv("OPENROUTER_API_KEY", "fictional-key");
+    vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "false"); vi.stubEnv("JEV_API_KEY", "fictional-key");
     const ctx = context();
     ctx.personalMemory = { status: "available", contextJson: "Fictional supplied context: prefers toast." };
     const candidate: ContextMemoryOutput["candidates"][number] = { targetStore: "memory", contextKey: "language",
@@ -104,7 +104,7 @@ describe("Jev routing shadow noninterference", () => {
   it("starts observation alongside Triage without making Triage wait for it", async () => {
     const { orchestrate } = await import("./orchestrator");
     vi.stubEnv("TRUSTKAKI_JEV_ROUTING_SHADOW_ENABLED", "true"); vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "false");
-    vi.stubEnv("OPENROUTER_API_KEY", "fictional-key");
+    vi.stubEnv("JEV_API_KEY", "fictional-key");
     let finish!: (response: Response) => void;
     const request = vi.fn(() => new Promise<Response>(resolve => { finish = resolve; })); vi.stubGlobal("fetch", request);
     runAgentMock.mockImplementation(async () => {
@@ -119,7 +119,7 @@ describe("Jev routing shadow noninterference", () => {
 
   it("keeps the existing social decision authoritative when both Jev paths are enabled", async () => {
     const { orchestrate } = await import("./orchestrator");
-    vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "true"); vi.stubEnv("OPENROUTER_API_KEY", "fictional-key");
+    vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "true"); vi.stubEnv("JEV_API_KEY", "fictional-key");
     const request = vi.fn(async (_url, options) => {
       const social = Boolean(JSON.parse(options.body).questions.social_intent);
       return Response.json({ model: "typesafe/jev-1.14-20261014", usage: { input_tokens: 100, output_tokens: 0, cost: 0.0000042 },
@@ -157,7 +157,7 @@ describe("active Jev specialist routing", () => {
     JSON.parse(response.traces.find(t => t.agentName === "Jev Specialist Router")!.output);
   beforeEach(() => {
     vi.stubEnv("TRUSTKAKI_JEV_ROUTING_ENABLED", "true"); vi.stubEnv("TRUSTKAKI_JEV_ROUTING_SHADOW_ENABLED", "false");
-    vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "false"); vi.stubEnv("OPENROUTER_API_KEY", "fictional-key");
+    vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "false"); vi.stubEnv("JEV_API_KEY", "fictional-key");
     runAgentMock.mockImplementation(async options => result(options.agentId,
       options.agentId === "triage" ? triageData() : options.fallback()));
   });
@@ -307,7 +307,7 @@ describe("active Jev specialist routing", () => {
 
   it("missing routing key makes no request and visibly falls back", async () => {
     const { orchestrate } = await import("./orchestrator");
-    vi.stubEnv("OPENROUTER_API_KEY", "");
+    vi.stubEnv("JEV_API_KEY", "");
     const request = vi.fn(); vi.stubGlobal("fetch", request);
     const response = await orchestrate("Hello", context());
     expect(response.messages[0].text).toBe("Good to hear.");
@@ -331,7 +331,7 @@ describe("active Jev specialist routing", () => {
 describe("enabled Jev social reply", () => {
   beforeEach(() => {
     vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "true");
-    vi.stubEnv("OPENROUTER_API_KEY", "fake-key");
+    vi.stubEnv("JEV_API_KEY", "fake-key");
   });
   afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
 
@@ -1350,7 +1350,7 @@ describe("current question and incident resolution regressions", () => {
   ])("preserves the direct conversational answer for %s", async (message, draft) => {
     vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "true");
     vi.stubEnv("TRUSTKAKI_JEV_ROUTING_ENABLED", "true");
-    vi.stubEnv("OPENROUTER_API_KEY", "fictional-key");
+    vi.stubEnv("JEV_API_KEY", "fictional-key");
     const request = vi.fn(async (_url, init) => {
       expect(JSON.parse(init.body).questions.social_intent).toBeUndefined();
       return Response.json({ model: "typesafe/jev-1.14-20261014", usage: { input_tokens: 100, output_tokens: 0 },
@@ -1393,7 +1393,7 @@ describe("irrelevant safety reviews do not seize the conversation", () => {
     'There is no payment or suspicious link. I was only quoting my friend. Can we talk about food?',
   ])("keeps the conversational answer after a speculative Jev safety route: %s", async message => {
     vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "true"); vi.stubEnv("TRUSTKAKI_JEV_ROUTING_ENABLED", "true");
-    vi.stubEnv("OPENROUTER_API_KEY", "fictional-key");
+    vi.stubEnv("JEV_API_KEY", "fictional-key");
     vi.stubGlobal("fetch", vi.fn(async () => Response.json({ model: "typesafe/jev-1.14-20261014", usage: { input_tokens: 100, output_tokens: 0, cost: 0.0000042 },
       answers: Object.fromEntries(routingFlags.map(flag => { const choice = flag === "digital_safety" ? "present" : "absent";
         return [flag, { type: "choice", choice, confidence: 1, probabilities: { present: +(choice === "present"), absent: +(choice === "absent"), unclear: 0 } }]; })) })));
@@ -1428,7 +1428,7 @@ describe("source-backed catalogue in the active conversation", () => {
   beforeEach(() => {
     vi.useFakeTimers(); vi.setSystemTime(new Date("2026-10-21T15:00:00+08:00"));
     vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "true"); vi.stubEnv("TRUSTKAKI_JEV_ROUTING_ENABLED", "false");
-    vi.stubEnv("OPENROUTER_API_KEY", "fictional-key");
+    vi.stubEnv("JEV_API_KEY", "fictional-key");
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ model: "typesafe/jev-1.14-20261014",
       usage: { input_tokens: 500, output_tokens: 0 }, answers: { social_intent: { type: "choice", choice: "interested", confidence: 1,
       probabilities: { interested: 1, declining: 0, unclear: 0 } } } })));

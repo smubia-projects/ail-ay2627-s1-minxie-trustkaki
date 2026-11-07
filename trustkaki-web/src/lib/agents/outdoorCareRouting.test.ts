@@ -18,7 +18,7 @@ const advisory = { reply: "Bedok: Thundery Showers. Source: data.gov.sg / NEA.",
 function arrange(type?: "health" | "daily_living", healthLabel = "absent", outdoorContext: TriageOutput["outdoorContext"] = "check", outdoorQuery?: string, responseMessage = "If your knee gets uncomfortable, please rest.") {
   vi.stubEnv("TRUSTKAKI_JEV_ROUTING_ENABLED", "true");
   vi.stubEnv("TRUSTKAKI_JEV_ENABLED", "false");
-  vi.stubEnv("OPENROUTER_API_KEY", "fictional-key");
+  vi.stubEnv("JEV_API_KEY", "fictional-key");
   vi.stubGlobal("fetch", vi.fn(async () => Response.json({
     model: "typesafe/jev-1.14-20261014", usage: { input_tokens: 100, output_tokens: 0, cost: 0 },
     answers: Object.fromEntries(routingFlags.map(flag => {

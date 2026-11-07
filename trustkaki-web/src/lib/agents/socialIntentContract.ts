@@ -9,7 +9,7 @@ export type SocialIntent = typeof socialIntentLabels[number];
  */
 export const jevEndpoint = () =>
   `${(process.env.JEV_API_BASE_URL?.trim() || "https://openrouter.ai/api/v1").replace(/\/+$/, "")}/systemone`;
-export const jevApiKey = () => process.env.JEV_API_KEY?.trim() || process.env.OPENROUTER_API_KEY?.trim();
+export const jevApiKey = () => process.env.JEV_API_KEY?.trim();
 export function buildJevSocialIntentRequest(message: string, question?: ActivityQuestion) {
   const currentMessage = z.string().trim().min(1).max(1000).parse(message);
   return {
