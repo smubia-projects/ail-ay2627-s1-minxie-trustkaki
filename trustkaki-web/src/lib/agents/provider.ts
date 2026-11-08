@@ -32,7 +32,7 @@ export class LLMProvider {
     this.baseUrl = (
       process.env.API_BASE_URL?.trim() || process.env.TRUSTKAKI_LLM_BASE_URL?.trim() || "https://openrouter.ai/api/v1"
     ).replace(/\/+$/, "");
-    this.defaultModel = process.env.MODEL_NAME?.trim() || process.env.TRUSTKAKI_LLM_MODEL?.trim() || "deepseek-v4-flash";
+    this.defaultModel = process.env.MODEL_NAME?.trim() || process.env.TRUSTKAKI_LLM_MODEL?.trim() || "deepseek-v4-1-flash-260910";
     this.timeoutMs = boundedTimeoutMs(process.env.TRUSTKAKI_LLM_TIMEOUT_MS);
   }
 

@@ -8,7 +8,7 @@ AI-assisted care coordination for AAC staff, by Ng Min Xie. Start with the [proj
 | --- | --- |
 | Web application | Next.js 16, React, TypeScript, on Vercel (`NEXT_PUBLIC_API_BASE` = the API URL) |
 | API | Express 5 in `server/`, bundled with esbuild into one file, on Cloud Run |
-| Conversational agents | OpenAI-compatible chat adapter (`src/lib/agents/provider.ts`): `API_BASE_URL`, `API_KEY`, `MODEL_NAME` (default `deepseek-v4-flash`, JSON output) |
+| Conversational agents | OpenAI-compatible chat adapter (`src/lib/agents/provider.ts`): `API_BASE_URL`, `API_KEY`, `MODEL_NAME` (default `deepseek-v4-1-flash-260910`, JSON output) |
 | Senior context | Fictional profiles, routines and confirmed preferences in `src/data/liveDemoSeniors.ts` |
 | Rate limit | Shared AI Lodge engine (`server/rateLimitEngine.js`, Upstash Redis), bucket `chat` |
 | Outdoor information | data.gov.sg/NEA weather and regional air-quality APIs |
